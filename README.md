@@ -1,5 +1,10 @@
 # Jahns
 
+A game for a gamejam.
+
+This codebase was previously [tictac](https://github.com/jackharrhy/tictac), but then the tictac core was ripped out,
+and replaced with the logic here.
+
 To start the Phoenix server:
 
 - Run `mix setup` to install and setup dependencies
