@@ -1,5 +1,7 @@
 # Tictac
 
+https://tictac.fly.dev/
+
 A mostly complete but still work-in-progress multiplayer tictactoe server.
 
 Things left to do:
