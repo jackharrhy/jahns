@@ -1,4 +1,4 @@
-defmodule SquidjamWeb.ConnCase do
+defmodule TictacWeb.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -11,7 +11,7 @@ defmodule SquidjamWeb.ConnCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use SquidjamWeb.ConnCase, async: true`, although
+  by setting `use TictacWeb.ConnCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -20,19 +20,19 @@ defmodule SquidjamWeb.ConnCase do
   using do
     quote do
       # The default endpoint for testing
-      @endpoint SquidjamWeb.Endpoint
+      @endpoint TictacWeb.Endpoint
 
-      use SquidjamWeb, :verified_routes
+      use TictacWeb, :verified_routes
 
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
-      import SquidjamWeb.ConnCase
+      import TictacWeb.ConnCase
     end
   end
 
   setup tags do
-    Squidjam.DataCase.setup_sandbox(tags)
+    Tictac.DataCase.setup_sandbox(tags)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end

@@ -1,8 +1,8 @@
-defmodule SquidjamTest.Tictactoe do
+defmodule TictacTest.Tictactoe do
   use ExUnit.Case
 
-  alias SquidjamTest.Tictactoe
-  alias Squidjam.Tictactoe
+  alias TictacTest.Tictactoe
+  alias Tictac.Tictactoe
 
   test "creates empty game correctly" do
     slug = "foo"

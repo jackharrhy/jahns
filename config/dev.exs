@@ -1,8 +1,8 @@
 import Config
 
 # Configure your database
-config :squidjam, Squidjam.Repo,
-  database: Path.expand("../squidjam_dev.db", Path.dirname(__ENV__.file)),
+config :tictac, Tictac.Repo,
+  database: Path.expand("../tictac_dev.db", Path.dirname(__ENV__.file)),
   pool_size: 5,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true
@@ -13,7 +13,7 @@ config :squidjam, Squidjam.Repo,
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we can use it
 # to bundle .js and .css sources.
-config :squidjam, SquidjamWeb.Endpoint,
+config :tictac, TictacWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
   http: [ip: {127, 0, 0, 1}, port: 4000],
@@ -50,17 +50,17 @@ config :squidjam, SquidjamWeb.Endpoint,
 # different ports.
 
 # Watch static and templates for browser reloading.
-config :squidjam, SquidjamWeb.Endpoint,
+config :tictac, TictacWeb.Endpoint,
   live_reload: [
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/squidjam_web/(controllers|live|components)/.*(ex|heex)$"
+      ~r"lib/tictac_web/(controllers|live|components)/.*(ex|heex)$"
     ]
   ]
 
 # Enable dev routes for dashboard and mailbox
-config :squidjam, dev_routes: true
+config :tictac, dev_routes: true
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"

@@ -1,4 +1,4 @@
-defmodule Squidjam.Application do
+defmodule Tictac.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
@@ -7,28 +7,28 @@ defmodule Squidjam.Application do
 
   @impl true
   def start(_type, _args) do
-    Squidjam.Release.migrate()
+    Tictac.Release.migrate()
 
     children = [
-      SquidjamWeb.Telemetry,
-      Squidjam.Repo,
+      TictacWeb.Telemetry,
+      Tictac.Repo,
       {Ecto.Migrator,
-       repos: Application.fetch_env!(:squidjam, :ecto_repos), skip: skip_migrations?()},
-      {DNSCluster, query: Application.get_env(:squidjam, :dns_cluster_query) || :ignore},
-      {Phoenix.PubSub, name: Squidjam.PubSub},
+       repos: Application.fetch_env!(:tictac, :ecto_repos), skip: skip_migrations?()},
+      {DNSCluster, query: Application.get_env(:tictac, :dns_cluster_query) || :ignore},
+      {Phoenix.PubSub, name: Tictac.PubSub},
       # Start the Finch HTTP client for sending emails
-      {Finch, name: Squidjam.Finch},
-      # Start a worker by calling: Squidjam.Worker.start_link(arg)
-      # {Squidjam.Worker, arg},
+      {Finch, name: Tictac.Finch},
+      # Start a worker by calling: Tictac.Worker.start_link(arg)
+      # {Tictac.Worker, arg},
       # Start to serve requests, typically the last entry
-      SquidjamWeb.Endpoint,
-      Squidjam.TictactoeSupervisor,
-      {Registry, keys: :unique, name: Squidjam.TictactoeRegistry}
+      TictacWeb.Endpoint,
+      Tictac.TictactoeSupervisor,
+      {Registry, keys: :unique, name: Tictac.TictactoeRegistry}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: Squidjam.Supervisor]
+    opts = [strategy: :one_for_one, name: Tictac.Supervisor]
     Supervisor.start_link(children, opts)
   end
 
@@ -36,7 +36,7 @@ defmodule Squidjam.Application do
   # whenever the application is updated.
   @impl true
   def config_change(changed, _new, removed) do
-    SquidjamWeb.Endpoint.config_change(changed, removed)
+    TictacWeb.Endpoint.config_change(changed, removed)
     :ok
   end
 

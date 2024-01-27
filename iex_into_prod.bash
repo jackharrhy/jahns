@@ -2,4 +2,4 @@
 
 set -e
 
-fly ssh console --pty --select -C "/app/bin/squidjam remote"
+fly ssh console --pty --select -C "/app/bin/tictac remote"

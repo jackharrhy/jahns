@@ -1,7 +1,7 @@
-defmodule SquidjamWeb.LobbyLive do
-  use SquidjamWeb, :live_view
+defmodule TictacWeb.LobbyLive do
+  use TictacWeb, :live_view
 
-  alias Squidjam.TictactoeServer
+  alias Tictac.TictactoeServer
 
   # TODO put into shared helpers dir
   def render(assigns) do

@@ -1,6 +1,6 @@
-defmodule Squidjam do
+defmodule Tictac do
   @moduledoc """
-  Squidjam keeps the contexts that define your domain
+  Tictac keeps the contexts that define your domain
   and business logic.
 
   Contexts are also responsible for managing your data, regardless

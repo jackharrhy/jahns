@@ -1,4 +1,4 @@
-defmodule SquidjamWeb.CoreComponents do
+defmodule TictacWeb.CoreComponents do
   @moduledoc """
   Provides core UI components.
 
@@ -17,7 +17,7 @@ defmodule SquidjamWeb.CoreComponents do
   use Phoenix.Component
 
   alias Phoenix.LiveView.JS
-  import SquidjamWeb.Gettext
+  import TictacWeb.Gettext
 
   @doc """
   Renders a modal.
@@ -659,9 +659,9 @@ defmodule SquidjamWeb.CoreComponents do
     # with our gettext backend as first argument. Translations are
     # available in the errors.po file (as we use the "errors" domain).
     if count = opts[:count] do
-      Gettext.dngettext(SquidjamWeb.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(TictacWeb.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(SquidjamWeb.Gettext, "errors", msg, opts)
+      Gettext.dgettext(TictacWeb.Gettext, "errors", msg, opts)
     end
   end
 

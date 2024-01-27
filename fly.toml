@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for squidjam on 2024-01-21T21:11:53-03:30
+# fly.toml app configuration file generated for tictac on 2024-01-21T21:11:53-03:30
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = "squidjam"
+app = "tictac"
 primary_region = "yul"
 kill_signal = "SIGTERM"
 
@@ -12,12 +12,12 @@ kill_signal = "SIGTERM"
 [deploy]
 
 [env]
-PHX_HOST = "squidjam.fly.dev"
+PHX_HOST = "tictac.fly.dev"
 PORT = "8080"
-DATABASE_PATH = "/mnt/data/squidjam.db"
+DATABASE_PATH = "/mnt/data/tictac.db"
 
 [mounts]
-source = "squidjam_data"
+source = "tictac_data"
 destination = "/mnt/data"
 
 [http_service]

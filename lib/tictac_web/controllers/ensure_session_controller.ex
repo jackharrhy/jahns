@@ -1,5 +1,5 @@
-defmodule SquidjamWeb.EnsureSessionController do
-  use SquidjamWeb, :controller
+defmodule TictacWeb.EnsureSessionController do
+  use TictacWeb, :controller
 
   def index(conn, params) do
     return_to = params["return_to"] || "/"

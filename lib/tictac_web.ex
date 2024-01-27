@@ -1,12 +1,12 @@
-defmodule SquidjamWeb do
+defmodule TictacWeb do
   @moduledoc """
   The entrypoint for defining your web interface, such
   as controllers, components, channels, and so on.
 
   This can be used in your application as:
 
-      use SquidjamWeb, :controller
-      use SquidjamWeb, :html
+      use TictacWeb, :controller
+      use TictacWeb, :html
 
   The definitions below will be executed for every controller,
   component, etc, so keep them short and clean, focused
@@ -40,10 +40,10 @@ defmodule SquidjamWeb do
     quote do
       use Phoenix.Controller,
         formats: [:html, :json],
-        layouts: [html: SquidjamWeb.Layouts]
+        layouts: [html: TictacWeb.Layouts]
 
       import Plug.Conn
-      import SquidjamWeb.Gettext
+      import TictacWeb.Gettext
 
       unquote(verified_routes())
     end
@@ -52,7 +52,7 @@ defmodule SquidjamWeb do
   def live_view do
     quote do
       use Phoenix.LiveView,
-        layout: {SquidjamWeb.Layouts, :app},
+        layout: {TictacWeb.Layouts, :app},
         container: {:div, class: "h-full flex flex-col"}
 
       unquote(html_helpers())
@@ -85,8 +85,8 @@ defmodule SquidjamWeb do
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components and translation
-      import SquidjamWeb.CoreComponents
-      import SquidjamWeb.Gettext
+      import TictacWeb.CoreComponents
+      import TictacWeb.Gettext
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
@@ -99,9 +99,9 @@ defmodule SquidjamWeb do
   def verified_routes do
     quote do
       use Phoenix.VerifiedRoutes,
-        endpoint: SquidjamWeb.Endpoint,
-        router: SquidjamWeb.Router,
-        statics: SquidjamWeb.static_paths()
+        endpoint: TictacWeb.Endpoint,
+        router: TictacWeb.Router,
+        statics: TictacWeb.static_paths()
     end
   end
 

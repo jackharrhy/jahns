@@ -1,4 +1,4 @@
-defmodule Squidjam.TictactoePlayer do
+defmodule Tictac.TictactoePlayer do
   defstruct [
     :id,
     :name,
@@ -28,7 +28,7 @@ defmodule Squidjam.TictactoePlayer do
   end
 end
 
-defimpl String.Chars, for: Squidjam.TictactoePlayer do
+defimpl String.Chars, for: Tictac.TictactoePlayer do
   def to_string(player) do
     "#{player.name} (#{player.mark})"
   end

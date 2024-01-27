@@ -1,6 +1,5 @@
-defmodule Squidjam.Tictactoe do
-  alias Ecto.Adapters.Postgres
-  alias Squidjam.TictactoePlayer
+defmodule Tictac.Tictactoe do
+  alias Tictac.TictactoePlayer
 
   defstruct chat_messages: [],
             slug: nil,
@@ -199,7 +198,6 @@ defmodule Squidjam.Tictactoe do
   end
 
   def get_player_by_id(game, player_id) do
-    IO.inspect(player_id)
     player = Enum.find(game.players, fn player -> player.id == player_id end)
 
     if player do

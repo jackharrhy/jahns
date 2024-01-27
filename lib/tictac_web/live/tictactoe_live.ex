@@ -1,8 +1,8 @@
-defmodule SquidjamWeb.TictactoeLive do
-  use SquidjamWeb, :live_view
+defmodule TictacWeb.TictactoeLive do
+  use TictacWeb, :live_view
 
-  alias Squidjam.TictactoeServer
-  alias Squidjam.TictactoeSupervisor
+  alias Tictac.TictactoeServer
+  alias Tictac.TictactoeSupervisor
 
   def handle_info(%{event: :game_updated, payload: %{game: game}}, socket) do
     {:noreply, assign(socket, game: game)}
@@ -132,13 +132,12 @@ defmodule SquidjamWeb.TictactoeLive do
           assign(socket, player: player)
 
         {:error, weird} ->
-          IO.inspect(weird)
           assign(socket, player: nil)
       end
 
     socket =
       if connected?(socket) do
-        :ok = Phoenix.PubSub.subscribe(Squidjam.PubSub, slug)
+        :ok = Phoenix.PubSub.subscribe(Tictac.PubSub, slug)
 
         if !is_nil(socket.assigns.player) && (length(game.players) == 0 || auto_join) do
           add_self_to_game(socket)

@@ -1,4 +1,4 @@
-defmodule SquidjamWeb.Telemetry do
+defmodule TictacWeb.Telemetry do
   use Supervisor
   import Telemetry.Metrics
 
@@ -52,23 +52,23 @@ defmodule SquidjamWeb.Telemetry do
       ),
 
       # Database Metrics
-      summary("squidjam.repo.query.total_time",
+      summary("Tictac.Repo.query.total_time",
         unit: {:native, :millisecond},
         description: "The sum of the other measurements"
       ),
-      summary("squidjam.repo.query.decode_time",
+      summary("Tictac.Repo.query.decode_time",
         unit: {:native, :millisecond},
         description: "The time spent decoding the data received from the database"
       ),
-      summary("squidjam.repo.query.query_time",
+      summary("Tictac.Repo.query.query_time",
         unit: {:native, :millisecond},
         description: "The time spent executing the query"
       ),
-      summary("squidjam.repo.query.queue_time",
+      summary("Tictac.Repo.query.queue_time",
         unit: {:native, :millisecond},
         description: "The time spent waiting for a database connection"
       ),
-      summary("squidjam.repo.query.idle_time",
+      summary("Tictac.Repo.query.idle_time",
         unit: {:native, :millisecond},
         description:
           "The time the connection spent waiting before being checked out for the query"
@@ -86,7 +86,7 @@ defmodule SquidjamWeb.Telemetry do
     [
       # A module, function and arguments to be invoked periodically.
       # This function must call :telemetry.execute/3 and a metric must be added above.
-      # {SquidjamWeb, :count_users, []}
+      # {TictacWeb, :count_users, []}
     ]
   end
 end

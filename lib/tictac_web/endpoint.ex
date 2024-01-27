@@ -1,12 +1,12 @@
-defmodule SquidjamWeb.Endpoint do
-  use Phoenix.Endpoint, otp_app: :squidjam
+defmodule TictacWeb.Endpoint do
+  use Phoenix.Endpoint, otp_app: :tictac
 
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
   # Set :encryption_salt if you would also like to encrypt it.
   @session_options [
     store: :cookie,
-    key: "_squidjam_key",
+    key: "_tictac_key",
     signing_salt: "wRg+9b49",
     same_site: "Lax"
   ]
@@ -19,9 +19,9 @@ defmodule SquidjamWeb.Endpoint do
   # when deploying your static files in production.
   plug Plug.Static,
     at: "/",
-    from: :squidjam,
+    from: :tictac,
     gzip: false,
-    only: SquidjamWeb.static_paths()
+    only: TictacWeb.static_paths()
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
@@ -29,7 +29,7 @@ defmodule SquidjamWeb.Endpoint do
     socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
     plug Phoenix.LiveReloader
     plug Phoenix.CodeReloader
-    plug Phoenix.Ecto.CheckRepoStatus, otp_app: :squidjam
+    plug Phoenix.Ecto.CheckRepoStatus, otp_app: :tictac
   end
 
   plug Phoenix.LiveDashboard.RequestLogger,
@@ -47,5 +47,5 @@ defmodule SquidjamWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
-  plug SquidjamWeb.Router
+  plug TictacWeb.Router
 end

@@ -1,9 +1,9 @@
-defmodule Squidjam.TictactoeServer do
+defmodule Tictac.TictactoeServer do
   use GenServer
 
   require Logger
 
-  alias Squidjam.Tictactoe
+  alias Tictac.Tictactoe
 
   def add_player(slug, player_id, player_name) do
     with {:ok, player, game} <- call_by_slug(slug, {:add_player, player_id, player_name}) do
@@ -21,6 +21,10 @@ defmodule Squidjam.TictactoeServer do
 
   def get_game(slug) do
     call_by_slug(slug, :get_game)
+  end
+
+  def get_game_state(slug) do
+    call_by_slug(slug, :get_game_state)
   end
 
   def get_player_by_id(slug, player_id) do
@@ -85,6 +89,11 @@ defmodule Squidjam.TictactoeServer do
   end
 
   @impl GenServer
+  def handle_call(:get_game_state, _from, state) do
+    {:reply, {:ok, state.game.state}, state}
+  end
+
+  @impl GenServer
   def handle_call({:get_player_by_id, player_id}, _from, state) do
     {:reply, Tictactoe.get_player_by_id(state.game, player_id), state}
   end
@@ -94,10 +103,10 @@ defmodule Squidjam.TictactoeServer do
   end
 
   def broadcast!(slug, event, payload \\ %{}) do
-    Phoenix.PubSub.broadcast!(Squidjam.PubSub, slug, %{event: event, payload: payload})
+    Phoenix.PubSub.broadcast!(Tictac.PubSub, slug, %{event: event, payload: payload})
   end
 
   defp via_tuple(slug) do
-    {:via, Registry, {Squidjam.TictactoeRegistry, slug}}
+    {:via, Registry, {Tictac.TictactoeRegistry, slug}}
   end
 end

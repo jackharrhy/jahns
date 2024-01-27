@@ -1,9 +1,9 @@
-defmodule Squidjam.Release do
+defmodule Tictac.Release do
   @moduledoc """
   Used for executing DB release tasks when run in production without Mix
   installed.
   """
-  @app :squidjam
+  @app :tictac
 
   def migrate do
     load_app()

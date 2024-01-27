@@ -7,19 +7,19 @@
 # General application configuration
 import Config
 
-config :squidjam,
-  ecto_repos: [Squidjam.Repo],
+config :tictac,
+  ecto_repos: [Tictac.Repo],
   generators: [timestamp_type: :utc_datetime]
 
 # Configures the endpoint
-config :squidjam, SquidjamWeb.Endpoint,
+config :tictac, TictacWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Phoenix.Endpoint.Cowboy2Adapter,
   render_errors: [
-    formats: [html: SquidjamWeb.ErrorHTML, json: SquidjamWeb.ErrorJSON],
+    formats: [html: TictacWeb.ErrorHTML, json: TictacWeb.ErrorJSON],
     layout: false
   ],
-  pubsub_server: Squidjam.PubSub,
+  pubsub_server: Tictac.PubSub,
   live_view: [signing_salt: "1RGuQPSs"]
 
 # Configures the mailer
@@ -29,7 +29,7 @@ config :squidjam, SquidjamWeb.Endpoint,
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :squidjam, Squidjam.Mailer, adapter: Swoosh.Adapters.Local
+config :tictac, Tictac.Mailer, adapter: Swoosh.Adapters.Local
 
 # Configure esbuild (the version is required)
 config :esbuild,

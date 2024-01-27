@@ -1,1 +1,1 @@
-call "%~dp0\squidjam" eval Squidjam.Release.migrate
+call "%~dp0\tictac" eval Tictac.Release.migrate
