@@ -1,4 +1,5 @@
 defmodule Squidjam.Tictactoe do
+  alias Ecto.Adapters.Postgres
   alias Squidjam.TictactoePlayer
 
   defstruct chat_messages: [],
