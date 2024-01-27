@@ -1,24 +1,22 @@
-# fly.toml app configuration file generated for tictac on 2024-01-21T21:11:53-03:30
+# fly.toml app configuration file generated for tictac on 2024-01-27T13:42:05-03:30
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = "tictac"
-primary_region = "yul"
-kill_signal = "SIGTERM"
+app = 'tictac'
+primary_region = 'yul'
+kill_signal = 'SIGTERM'
 
 [build]
 
-[deploy]
-
 [env]
-PHX_HOST = "tictac.fly.dev"
-PORT = "8080"
-DATABASE_PATH = "/mnt/data/tictac.db"
+DATABASE_PATH = '/mnt/tictac_data/tictac.db'
+PHX_HOST = 'tictac.fly.dev'
+PORT = '8080'
 
 [mounts]
 source = "tictac_data"
-destination = "/mnt/data"
+destination = "/mnt/tictac_data/"
 
 [http_service]
 internal_port = 8080
@@ -26,13 +24,14 @@ force_https = true
 auto_stop_machines = false
 auto_start_machines = false
 min_machines_running = 1
-processes = ["app"]
-[http_service.concurrency]
-type = "connections"
-hard_limit = 10000
-soft_limit = 9000
+processes = ['app']
 
-[[vm]]
-cpu_kind = "shared"
+[http_service.concurrency]
+type = 'connections'
+hard_limit = 1000
+soft_limit = 1000
+
+[vm]
+cpu_kind = 'shared'
 cpus = 1
 memory_mb = 1024

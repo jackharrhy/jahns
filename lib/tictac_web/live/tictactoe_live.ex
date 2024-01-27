@@ -65,6 +65,14 @@ defmodule TictacWeb.TictactoeLive do
         <% end %>
       </div>
     </div>
+    <%= if @debug do %>
+      <div class="bg-black text-white p-4 mb-2">
+        <p>player</p>
+        <code><pre><%= Jason.encode!(@player, pretty: true) %></pre></code>
+        <p>game</p>
+        <code><pre><%= Jason.encode!(@game, pretty: true) %></pre></code>
+      </div>
+    <% end %>
     """
   end
 
@@ -114,6 +122,9 @@ defmodule TictacWeb.TictactoeLive do
   end
 
   def mount(%{"slug" => slug} = params, %{"session_id" => session_id}, socket) do
+    debug = Map.has_key?(params, "debug")
+    socket = assign(socket, debug: debug)
+
     socket = assign(socket, session_id: session_id)
 
     auto_join = Map.has_key?(params, "join")
@@ -131,7 +142,7 @@ defmodule TictacWeb.TictactoeLive do
         {:ok, player} ->
           assign(socket, player: player)
 
-        {:error, weird} ->
+        {:error, _reason} ->
           assign(socket, player: nil)
       end
 

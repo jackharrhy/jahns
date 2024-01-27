@@ -1,4 +1,5 @@
 defmodule Tictac.TictactoePlayer do
+  @derive Jason.Encoder
   defstruct [
     :id,
     :name,

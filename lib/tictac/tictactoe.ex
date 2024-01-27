@@ -1,6 +1,7 @@
 defmodule Tictac.Tictactoe do
   alias Tictac.TictactoePlayer
 
+  @derive Jason.Encoder
   defstruct chat_messages: [],
             slug: nil,
             state: :setup,
