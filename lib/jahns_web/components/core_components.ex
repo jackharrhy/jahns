@@ -1,4 +1,4 @@
-defmodule TictacWeb.CoreComponents do
+defmodule JahnsWeb.CoreComponents do
   @moduledoc """
   Provides core UI components.
 
@@ -17,7 +17,7 @@ defmodule TictacWeb.CoreComponents do
   use Phoenix.Component
 
   alias Phoenix.LiveView.JS
-  import TictacWeb.Gettext
+  import JahnsWeb.Gettext
 
   @doc """
   Renders a modal.
@@ -659,9 +659,9 @@ defmodule TictacWeb.CoreComponents do
     # with our gettext backend as first argument. Translations are
     # available in the errors.po file (as we use the "errors" domain).
     if count = opts[:count] do
-      Gettext.dngettext(TictacWeb.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(JahnsWeb.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(TictacWeb.Gettext, "errors", msg, opts)
+      Gettext.dgettext(JahnsWeb.Gettext, "errors", msg, opts)
     end
   end
 

@@ -1,9 +1,9 @@
-defmodule Tictac.MixProject do
+defmodule Jahns.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :tictac,
+      app: :jahns,
       version: "0.1.0",
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -18,7 +18,7 @@ defmodule Tictac.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {Tictac.Application, []},
+      mod: {Jahns.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end

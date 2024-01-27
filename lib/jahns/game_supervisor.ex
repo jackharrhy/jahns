@@ -1,7 +1,7 @@
-defmodule Tictac.TictactoeSupervisor do
+defmodule Jahns.GameSupervisor do
   use DynamicSupervisor
 
-  alias Tictac.TictactoeServer
+  alias Jahns.GameServer
 
   def start_link(_arg) do
     DynamicSupervisor.start_link(__MODULE__, nil, name: __MODULE__)
@@ -13,8 +13,8 @@ defmodule Tictac.TictactoeSupervisor do
 
   def start_game(slug) do
     child_spec = %{
-      id: TictactoeServer,
-      start: {TictactoeServer, :start_link, [slug]},
+      id: GameServer,
+      start: {GameServer, :start_link, [slug]},
       restart: :transient
     }
 
@@ -22,7 +22,7 @@ defmodule Tictac.TictactoeSupervisor do
   end
 
   def stop_game(slug) do
-    case Tictac.TictactoeServer.game_pid(slug) do
+    case GameServer.game_pid(slug) do
       pid when is_pid(pid) ->
         DynamicSupervisor.terminate_child(__MODULE__, pid)
 

@@ -1,12 +1,12 @@
-defmodule TictacWeb.ErrorJSONTest do
-  use TictacWeb.ConnCase, async: true
+defmodule JahnsWeb.ErrorJSONTest do
+  use JahnsWeb.ConnCase, async: true
 
   test "renders 404" do
-    assert TictacWeb.ErrorJSON.render("404.json", %{}) == %{errors: %{detail: "Not Found"}}
+    assert JahnsWeb.ErrorJSON.render("404.json", %{}) == %{errors: %{detail: "Not Found"}}
   end
 
   test "renders 500" do
-    assert TictacWeb.ErrorJSON.render("500.json", %{}) ==
+    assert JahnsWeb.ErrorJSON.render("500.json", %{}) ==
              %{errors: %{detail: "Internal Server Error"}}
   end
 end

@@ -1,18 +1,4 @@
-# Tictac
-
-https://tictac.fly.dev/
-
-A mostly complete but still work-in-progress multiplayer tictactoe server.
-
-Things left to do:
-
-- Cleanup game servers after their is nobody left looking at them, using presence
-- List of active games on the home screen
-
-Maybe things in the future:
-
-- More pretty
-- Ultimate tictactoe
+# Jahns
 
 To start the Phoenix server:
 

@@ -1,7 +1,7 @@
-defmodule TictacWeb.LobbyLive do
-  use TictacWeb, :live_view
+defmodule JahnsWeb.LobbyLive do
+  use JahnsWeb, :live_view
 
-  alias Tictac.TictactoeServer
+  alias Jahns.GameServer
 
   # TODO put into shared helpers dir
   def render(assigns) do
@@ -27,7 +27,7 @@ defmodule TictacWeb.LobbyLive do
 
   def handle_event("create-game", _fields, socket) do
     slug = MnemonicSlugs.generate_slug()
-    {:noreply, push_navigate(socket, to: ~p"/tictactoe/#{slug}")}
+    {:noreply, push_navigate(socket, to: ~p"/game/#{slug}")}
   end
 
   def handle_event("update", fields, socket) do
@@ -38,8 +38,8 @@ defmodule TictacWeb.LobbyLive do
   def handle_event("join-game", fields, socket) do
     %{"slug" => slug} = fields
 
-    if TictactoeServer.game_exists?(slug) do
-      {:noreply, push_navigate(socket, to: ~p"/tictactoe/#{slug}?join")}
+    if GameServer.game_exists?(slug) do
+      {:noreply, push_navigate(socket, to: ~p"/game/#{slug}?join")}
     else
       {:noreply, assign(socket, error: "#{slug}: game not found")}
     end

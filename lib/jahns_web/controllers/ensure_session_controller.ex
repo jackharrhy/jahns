@@ -1,5 +1,5 @@
-defmodule TictacWeb.EnsureSessionController do
-  use TictacWeb, :controller
+defmodule JahnsWeb.EnsureSessionController do
+  use JahnsWeb, :controller
 
   def index(conn, params) do
     return_to = params["return_to"] || "/"

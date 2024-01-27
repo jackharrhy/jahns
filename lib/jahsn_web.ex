@@ -1,12 +1,12 @@
-defmodule TictacWeb do
+defmodule JahnsWeb do
   @moduledoc """
   The entrypoint for defining your web interface, such
   as controllers, components, channels, and so on.
 
   This can be used in your application as:
 
-      use TictacWeb, :controller
-      use TictacWeb, :html
+      use JahnsWeb, :controller
+      use JahnsWeb, :html
 
   The definitions below will be executed for every controller,
   component, etc, so keep them short and clean, focused
@@ -40,10 +40,10 @@ defmodule TictacWeb do
     quote do
       use Phoenix.Controller,
         formats: [:html, :json],
-        layouts: [html: TictacWeb.Layouts]
+        layouts: [html: JahnsWeb.Layouts]
 
       import Plug.Conn
-      import TictacWeb.Gettext
+      import JahnsWeb.Gettext
 
       unquote(verified_routes())
     end
@@ -52,7 +52,7 @@ defmodule TictacWeb do
   def live_view do
     quote do
       use Phoenix.LiveView,
-        layout: {TictacWeb.Layouts, :app},
+        layout: {JahnsWeb.Layouts, :app},
         container: {:div, class: "h-full flex flex-col"}
 
       unquote(html_helpers())
@@ -85,8 +85,8 @@ defmodule TictacWeb do
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components and translation
-      import TictacWeb.CoreComponents
-      import TictacWeb.Gettext
+      import JahnsWeb.CoreComponents
+      import JahnsWeb.Gettext
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
@@ -99,9 +99,9 @@ defmodule TictacWeb do
   def verified_routes do
     quote do
       use Phoenix.VerifiedRoutes,
-        endpoint: TictacWeb.Endpoint,
-        router: TictacWeb.Router,
-        statics: TictacWeb.static_paths()
+        endpoint: JahnsWeb.Endpoint,
+        router: JahnsWeb.Router,
+        statics: JahnsWeb.static_paths()
     end
   end
 

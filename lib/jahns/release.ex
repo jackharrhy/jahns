@@ -1,9 +1,9 @@
-defmodule Tictac.Release do
+defmodule Jahns.Release do
   @moduledoc """
   Used for executing DB release tasks when run in production without Mix
   installed.
   """
-  @app :tictac
+  @app :jahns
 
   def migrate do
     load_app()

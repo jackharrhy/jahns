@@ -1,12 +1,12 @@
-defmodule TictacWeb.Endpoint do
-  use Phoenix.Endpoint, otp_app: :tictac
+defmodule JahnsWeb.Endpoint do
+  use Phoenix.Endpoint, otp_app: :jahns
 
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
   # Set :encryption_salt if you would also like to encrypt it.
   @session_options [
     store: :cookie,
-    key: "_tictac_key",
+    key: "_jahns_key",
     signing_salt: "wRg+9b49",
     same_site: "Lax"
   ]
@@ -19,9 +19,9 @@ defmodule TictacWeb.Endpoint do
   # when deploying your static files in production.
   plug Plug.Static,
     at: "/",
-    from: :tictac,
+    from: :jahns,
     gzip: false,
-    only: TictacWeb.static_paths()
+    only: JahnsWeb.static_paths()
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
@@ -29,7 +29,7 @@ defmodule TictacWeb.Endpoint do
     socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
     plug Phoenix.LiveReloader
     plug Phoenix.CodeReloader
-    plug Phoenix.Ecto.CheckRepoStatus, otp_app: :tictac
+    plug Phoenix.Ecto.CheckRepoStatus, otp_app: :jahns
   end
 
   plug Phoenix.LiveDashboard.RequestLogger,
@@ -47,5 +47,5 @@ defmodule TictacWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
-  plug TictacWeb.Router
+  plug JahnsWeb.Router
 end

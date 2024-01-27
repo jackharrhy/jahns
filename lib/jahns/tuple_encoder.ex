@@ -1,4 +1,4 @@
-defmodule Tictac.TupleEncoder do
+defmodule Jahns.TupleEncoder do
   alias Jason.Encoder
 
   defimpl Encoder, for: Tuple do

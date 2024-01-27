@@ -1,4 +1,4 @@
-defmodule Tictac.Application do
+defmodule Jahns.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
@@ -7,28 +7,28 @@ defmodule Tictac.Application do
 
   @impl true
   def start(_type, _args) do
-    Tictac.Release.migrate()
+    # Jahns.Release.migrate()
 
     children = [
-      TictacWeb.Telemetry,
-      Tictac.Repo,
+      JahnsWeb.Telemetry,
+      Jahns.Repo,
       {Ecto.Migrator,
-       repos: Application.fetch_env!(:tictac, :ecto_repos), skip: skip_migrations?()},
-      {DNSCluster, query: Application.get_env(:tictac, :dns_cluster_query) || :ignore},
-      {Phoenix.PubSub, name: Tictac.PubSub},
+       repos: Application.fetch_env!(:jahns, :ecto_repos), skip: skip_migrations?()},
+      {DNSCluster, query: Application.get_env(:jahns, :dns_cluster_query) || :ignore},
+      {Phoenix.PubSub, name: Jahns.PubSub},
       # Start the Finch HTTP client for sending emails
-      {Finch, name: Tictac.Finch},
-      # Start a worker by calling: Tictac.Worker.start_link(arg)
-      # {Tictac.Worker, arg},
+      {Finch, name: Jahns.Finch},
+      # Start a worker by calling: Jahns.Worker.start_link(arg)
+      # {Jahns.Worker, arg},
       # Start to serve requests, typically the last entry
-      TictacWeb.Endpoint,
-      Tictac.TictactoeSupervisor,
-      {Registry, keys: :unique, name: Tictac.TictactoeRegistry}
+      JahnsWeb.Endpoint,
+      Jahns.GameSupervisor,
+      {Registry, keys: :unique, name: Jahns.GameRegistry}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: Tictac.Supervisor]
+    opts = [strategy: :one_for_one, name: Jahns.Supervisor]
     Supervisor.start_link(children, opts)
   end
 
@@ -36,7 +36,7 @@ defmodule Tictac.Application do
   # whenever the application is updated.
   @impl true
   def config_change(changed, _new, removed) do
-    TictacWeb.Endpoint.config_change(changed, removed)
+    JahnsWeb.Endpoint.config_change(changed, removed)
     :ok
   end
 

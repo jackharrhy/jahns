@@ -1,5 +1,5 @@
-defmodule Tictac.Repo do
+defmodule Jahns.Repo do
   use Ecto.Repo,
-    otp_app: :tictac,
+    otp_app: :jahns,
     adapter: Ecto.Adapters.SQLite3
 end

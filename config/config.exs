@@ -7,19 +7,19 @@
 # General application configuration
 import Config
 
-config :tictac,
-  ecto_repos: [Tictac.Repo],
+config :jahns,
+  ecto_repos: [Jahns.Repo],
   generators: [timestamp_type: :utc_datetime]
 
 # Configures the endpoint
-config :tictac, TictacWeb.Endpoint,
+config :jahns, JahnsWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Phoenix.Endpoint.Cowboy2Adapter,
   render_errors: [
-    formats: [html: TictacWeb.ErrorHTML, json: TictacWeb.ErrorJSON],
+    formats: [html: JahnsWeb.ErrorHTML, json: JahnsWeb.ErrorJSON],
     layout: false
   ],
-  pubsub_server: Tictac.PubSub,
+  pubsub_server: Jahns.PubSub,
   live_view: [signing_salt: "1RGuQPSs"]
 
 # Configures the mailer
@@ -29,7 +29,7 @@ config :tictac, TictacWeb.Endpoint,
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :tictac, Tictac.Mailer, adapter: Swoosh.Adapters.Local
+config :jahns, Jahns.Mailer, adapter: Swoosh.Adapters.Local
 
 # Configure esbuild (the version is required)
 config :esbuild,

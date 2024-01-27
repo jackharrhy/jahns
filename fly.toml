@@ -1,22 +1,22 @@
-# fly.toml app configuration file generated for tictac on 2024-01-27T13:42:05-03:30
+# fly.toml app configuration file generated for jahns on 2024-01-27T13:42:05-03:30
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'tictac'
+app = 'jahns'
 primary_region = 'yul'
 kill_signal = 'SIGTERM'
 
 [build]
 
 [env]
-DATABASE_PATH = '/mnt/tictac_data/tictac.db'
-PHX_HOST = 'tictac.fly.dev'
+DATABASE_PATH = '/mnt/jahns_data/jahns.db'
+PHX_HOST = 'jahns.fly.dev'
 PORT = '8080'
 
 [mounts]
-source = "tictac_data"
-destination = "/mnt/tictac_data/"
+source = "jahns_data"
+destination = "/mnt/jahns_data/"
 
 [http_service]
 internal_port = 8080
