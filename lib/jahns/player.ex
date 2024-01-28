@@ -5,6 +5,8 @@ defmodule Jahns.Player do
   defstruct [
     :id,
     :name,
+    :index,
+    :node,
     :art,
     :energy,
     :currency,
@@ -41,12 +43,14 @@ defmodule Jahns.Player do
     @default_max_energy
   end
 
-  def new(id, name) do
+  def new(id, name, index, node) do
     random_art = Enum.random(@art)
 
     struct!(__MODULE__, %{
       id: id,
       name: name,
+      index: index,
+      node: node,
       art: random_art,
       energy: @default_max_energy,
       currency: 0,
@@ -60,6 +64,6 @@ end
 
 defimpl String.Chars, for: Jahns.Player do
   def to_string(player) do
-    "#{player.name}"
+    "#{player.name} #{player.art |> elem(1)}"
   end
 end

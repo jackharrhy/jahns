@@ -6,9 +6,19 @@ defmodule JahnsWeb.GameLive do
   alias Jahns.GameSupervisor
 
   def handle_info(%{event: :game_updated, payload: %{game: game}}, socket) do
-    {:ok, player} = Game.get_player_by_id(game, socket.assigns.session_id)
+    socket = assign(socket, game: game)
 
-    {:noreply, assign(socket, game: game, player: player)}
+    session_id = socket.assigns.session_id
+
+    socket =
+      if is_nil(session_id) do
+        socket
+      else
+        {:ok, player} = Game.get_player_by_id(game, session_id)
+        assign(socket, player: player)
+      end
+
+    {:noreply, socket}
   end
 
   def handle_info({:clear_flash, level}, socket) do
@@ -17,6 +27,17 @@ defmodule JahnsWeb.GameLive do
 
   def handle_info({:put_temporary_flash, level, message}, socket) do
     {:noreply, put_temporary_flash(socket, level, message)}
+  end
+
+  def index_to_transform(index) do
+    offset = 16
+
+    case index do
+      0 -> "translate(0 -#{offset})"
+      1 -> "translate(#{offset} 0)"
+      2 -> "translate(0 #{offset})"
+      3 -> "translate(-#{offset} 0)"
+    end
   end
 
   def render_map(assigns) do
@@ -32,9 +53,22 @@ defmodule JahnsWeb.GameLive do
           y1={start_y}
           x2={end_x}
           y2={end_y}
-          stroke="black"
+          stroke="rgba(0, 0, 0, 0.3)"
           stroke-width="2"
         />
+      <% end %>
+
+      <%= for %{id: id, index: index, art: {:text, text}, node: {_id, x, y}} <- @game.players do %>
+        <text
+          id={id}
+          x={x}
+          y={y}
+          dominant-baseline="middle"
+          text-anchor="middle"
+          transform={index_to_transform(index)}
+        >
+          <%= text %>
+        </text>
       <% end %>
     </svg>
     """
@@ -77,12 +111,16 @@ defmodule JahnsWeb.GameLive do
         <%= unless is_nil(@player) do %>
           <div class="flex h-full p-2 gap-2 justify-center">
             <%= for card <- @player.hand do %>
-              <div class="flex flex-col gap-1 justify-center p-.25 h-full w-24 border-2 border text-center">
+              <button
+                phx-click="use-card"
+                phx-value-card-id={card.id}
+                class="flex flex-col gap-1 justify-center p-.25 h-full w-24 border-2 border text-center"
+              >
                 <p class="text-xs"><%= card.name %></p>
                 <p class="text-2xl"><%= card.art |> elem(1) %></p>
                 <p><%= card.low_value %> - <%= card.high_value %></p>
                 <p><%= card.cost %> ✨</p>
-              </div>
+              </button>
             <% end %>
           </div>
         <% end %>
@@ -100,10 +138,36 @@ defmodule JahnsWeb.GameLive do
     """
   end
 
+  def handle_event("use-card", %{"card-id" => card_id}, socket) do
+    %{player: player, game: game} = socket.assigns
+
+    card_id = String.to_integer(card_id)
+
+    case GameServer.use_card(game.slug, player.id, card_id) do
+      {:ok, game} ->
+        {:noreply, assign(socket, game: game)}
+
+      {:error, reason} ->
+        {:noreply, put_temporary_flash(socket, :error, "#{reason}")}
+    end
+  end
+
   def handle_event("join-game", _, socket) do
     %{player: nil} = socket.assigns
 
     {:noreply, add_self_to_game(socket)}
+  end
+
+  def handle_event("start-game", _, socket) do
+    %{player: player, game: game} = socket.assigns
+
+    case GameServer.start_game(game.slug, player.id) do
+      {:ok, game} ->
+        {:noreply, assign(socket, game: game)}
+
+      {:error, reason} ->
+        {:noreply, put_temporary_flash(socket, :error, "#{reason}")}
+    end
   end
 
   def add_self_to_game(socket) do

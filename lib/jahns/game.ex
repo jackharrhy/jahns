@@ -20,40 +20,85 @@ defmodule Jahns.Game do
     )
   end
 
-  def start_game(game) do
-    raise "not implemented"
-  end
+  def start_game(game, player_id) do
+    {:ok, player} = get_player_by_id(game, player_id)
 
-  def end_game(game, result) do
-    raise "not implemented"
-  end
+    if game.state == :setup and player_can_start_game?(game, player) do
+      random_player = Enum.random(game.players)
 
-  def game_active(game) do
-    if game.state == :active do
-      :ok
+      game =
+        game
+        |> Map.put(:state, :active)
+        |> Map.put(:turn, random_player.id)
+
+      game =
+        game
+        |> new_message("game started by #{player}")
+        |> new_message("it is #{random_player}'s turn")
+
+      {:ok, game}
     else
-      {:error, :game_not_active}
+      {:error, :cannot_start_game}
     end
   end
 
-  def it_is_my_turn(game, player) do
-    raise "not implemented"
+  def use_card(card) do
+    IO.inspect(["card", card])
+
+    {:ok, []}
   end
 
-  def is_player_host?(game, player) when not is_nil(player) do
-    Enum.at(game.players, 0).id == player.id
+  def apply_effects(game, effects) do
+    IO.inspect(["effects", effects])
+
+    {:ok, game}
+  end
+
+  def use_card(game, player_id, card_id) do
+    with :ok <- game_in_state(game, :active),
+         {:ok, player} <- get_player_by_id(game, player_id),
+         :ok <- is_players_turn(game, player),
+         {:ok, card} <- card_id_to_card_in_hand(player, card_id),
+         {:ok, effects} <- use_card(card),
+         {:ok, game} <- apply_effects(game, effects) do
+      {:ok, game}
+    end
+  end
+
+  def is_players_turn?(game, player_id) do
+    game.turn == player_id
+  end
+
+  def is_players_turn(game, player) do
+    if is_players_turn?(game, player.id) do
+      :ok
+    else
+      {:error, :not_players_turn}
+    end
+  end
+
+  def card_id_to_card_in_hand(player, card_id) do
+    if card = Enum.find(player.hand, fn card -> card.id == card_id end) do
+      {:ok, card}
+    else
+      {:error, :card_not_in_hand}
+    end
+  end
+
+  def game_in_state(game, state) when game.state == state do
+    :ok
+  end
+
+  def game_in_state(game, state) do
+    {:error, :game_not_in_required_state}
+  end
+
+  def is_player_host?(player) when not is_nil(player) do
+    player.index == 0
   end
 
   def player_can_start_game?(game, player) do
-    is_player_host?(game, player) && length(game.players) >= 2
-  end
-
-  def result(game) do
-    raise "not implemented"
-  end
-
-  def next_turn(game) do
-    raise "not implemented"
+    is_player_host?(player) && length(game.players) >= 2
   end
 
   def add_player(game, player_id, player_name) do
@@ -61,7 +106,11 @@ defmodule Jahns.Game do
       if length(game.players) >= 4 do
         {:error, :game_full}
       else
-        player = Player.new(player_id, player_name)
+        player_index = length(game.players)
+
+        starting_node = game.map.nodes |> Enum.at(0)
+
+        player = Player.new(player_id, player_name, player_index, starting_node)
 
         game =
           game

@@ -6,5 +6,4 @@ xpath_query = "//circle"
 
 for result <-
       :xmerl_xpath.string(:erlang.binary_to_list(xpath_query), xmerl) do
-  IO.inspect(result)
 end

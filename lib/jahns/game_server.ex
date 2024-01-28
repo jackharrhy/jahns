@@ -12,6 +12,20 @@ defmodule Jahns.GameServer do
     end
   end
 
+  def start_game(slug, player_id) do
+    with {:ok, game} <- call_by_slug(slug, {:start_game, player_id}) do
+      broadcast_game_updated!(slug, game)
+      {:ok, game}
+    end
+  end
+
+  def use_card(slug, player_id, card_id) do
+    with {:ok, game} <- call_by_slug(slug, {:use_card, player_id, card_id}) do
+      broadcast_game_updated!(slug, game)
+      {:ok, game}
+    end
+  end
+
   def get_game(slug) do
     call_by_slug(slug, :get_game)
   end
@@ -55,6 +69,28 @@ defmodule Jahns.GameServer do
     case Game.add_player(state.game, player_id, player_name) do
       {:ok, game, player} ->
         {:reply, {:ok, game, player}, %{state | game: game}}
+
+      {:error, _} = error ->
+        {:reply, error, state}
+    end
+  end
+
+  @impl GenServer
+  def handle_call({:start_game, player_id}, _from, state) do
+    case Game.start_game(state.game, player_id) do
+      {:ok, game} ->
+        {:reply, {:ok, game}, %{state | game: game}}
+
+      {:error, _} = error ->
+        {:reply, error, state}
+    end
+  end
+
+  @impl GenServer
+  def handle_call({:use_card, player_id, card_id}, _from, state) do
+    case Game.use_card(state.game, player_id, card_id) do
+      {:ok, game} ->
+        {:reply, {:ok, game}, %{state | game: game}}
 
       {:error, _} = error ->
         {:reply, error, state}
