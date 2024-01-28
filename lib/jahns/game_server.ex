@@ -6,9 +6,9 @@ defmodule Jahns.GameServer do
   alias Jahns.Game
 
   def add_player(slug, player_id, player_name) do
-    with {:ok, player, game} <- call_by_slug(slug, {:add_player, player_id, player_name}) do
+    with {:ok, game, player} <- call_by_slug(slug, {:add_player, player_id, player_name}) do
       broadcast_game_updated!(slug, game)
-      {:ok, player}
+      {:ok, game, player}
     end
   end
 
@@ -53,8 +53,8 @@ defmodule Jahns.GameServer do
   @impl GenServer
   def handle_call({:add_player, player_id, player_name}, _from, state) do
     case Game.add_player(state.game, player_id, player_name) do
-      {:ok, player, game} ->
-        {:reply, {:ok, player, game}, %{state | game: game}}
+      {:ok, game, player} ->
+        {:reply, {:ok, game, player}, %{state | game: game}}
 
       {:error, _} = error ->
         {:reply, error, state}

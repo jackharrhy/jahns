@@ -53,7 +53,7 @@ defmodule JahnsWeb do
     quote do
       use Phoenix.LiveView,
         layout: {JahnsWeb.Layouts, :app},
-        container: {:div, class: "h-full flex flex-col"}
+        container: {:div, class: "liveview-root h-full flex flex-col"}
 
       unquote(html_helpers())
     end
