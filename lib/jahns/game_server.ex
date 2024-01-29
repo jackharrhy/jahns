@@ -19,8 +19,8 @@ defmodule Jahns.GameServer do
     end
   end
 
-  def use_card(slug, player_id, card_id) do
-    with {:ok, game} <- call_by_slug(slug, {:use_card, player_id, card_id}) do
+  def attempt_to_use_card(slug, player_id, card_id) do
+    with {:ok, game} <- call_by_slug(slug, {:attempt_to_use_card, player_id, card_id}) do
       broadcast_game_updated!(slug, game)
       {:ok, game}
     end
@@ -87,9 +87,14 @@ defmodule Jahns.GameServer do
   end
 
   @impl GenServer
-  def handle_call({:use_card, player_id, card_id}, _from, state) do
-    case Game.use_card(state.game, player_id, card_id) do
-      {:ok, game} ->
+  def handle_call({:attempt_to_use_card, player_id, card_id}, _from, state) do
+    case Game.attempt_to_use_card(state.game, player_id, card_id) do
+      {:ok, game, nil} ->
+        {:reply, {:ok, game}, %{state | game: game}}
+
+      {:ok, game, {send_after, message}} ->
+        :timer.send_after(send_after, self(), message)
+
         {:reply, {:ok, game}, %{state | game: game}}
 
       {:error, _} = error ->
@@ -105,6 +110,20 @@ defmodule Jahns.GameServer do
   @impl GenServer
   def handle_call({:get_player_by_id, player_id}, _from, state) do
     {:reply, Game.get_player_by_id(state.game, player_id), state}
+  end
+
+  @impl GenServer
+  def handle_info({:move_active_player, value}, state) do
+    case Game.move_active_player(state.game, value) do
+      {:ok, game, nil} ->
+        broadcast_game_updated!(game.slug, game)
+        {:noreply, %{state | game: game}}
+
+      {:ok, game, {send_after, message}} ->
+        :timer.send_after(send_after, self(), message)
+        broadcast_game_updated!(game.slug, game)
+        {:noreply, %{state | game: game}}
+    end
   end
 
   defp broadcast_game_updated!(slug, game) do

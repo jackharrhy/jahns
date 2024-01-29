@@ -1,5 +1,7 @@
 # Jahns
 
+https://jahns.fly.dev/
+
 A game for a gamejam.
 
 This codebase was previously [tictac](https://github.com/jackharrhy/tictac), but then the tictac core was ripped out,

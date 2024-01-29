@@ -14,11 +14,13 @@ defmodule Jahns.Card do
     metrobus_card = new(1, "Metrobus", {:text, "🚌"}, :move, 0, 4, 1)
     jiffy_card = new(2, "Jiffy", {:text, "🚕"}, :move, 2, 7, 2)
     newfound_card = new(3, "Newfound Cab", {:text, "🚕"}, :move, 3, 6, 2)
+    mums_car = new(4, "Mum's Car", {:text, "🚗"}, :move, 6, 8, 3)
 
     [
       metrobus_card,
       jiffy_card,
-      newfound_card
+      newfound_card,
+      mums_car
     ]
   end
 

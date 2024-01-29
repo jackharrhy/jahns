@@ -5,6 +5,12 @@ defmodule Jahns.Map do
     :edges
   ]
 
+  def nodes_connected_to_node(map, node_id) do
+    map.edges
+    |> Enum.filter(fn {{start_id, _, _}, _} -> start_id == node_id end)
+    |> Enum.map(fn {_, end_} -> end_ end)
+  end
+
   def new() do
     this_file = __ENV__.file
 

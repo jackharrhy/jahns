@@ -42,26 +42,100 @@ defmodule Jahns.Game do
     end
   end
 
-  def use_card(card) do
-    IO.inspect(["card", card])
+  def move_active_player(game, value) do
+    IO.inspect("move_active_player #{value}")
 
-    {:ok, []}
+    {:ok, player} = get_player_by_id(game, game.turn)
+    player_node_id = player.node |> elem(0)
+
+    nodes = Jahns.Map.nodes_connected_to_node(game.map, player_node_id)
+
+    # TODO for now, pick random node
+    # in the future, if only one node, just move
+    # if more than one, let player choose
+    to_node = Enum.random(nodes)
+
+    player = Map.put(player, :node, to_node)
+
+    game = update_player(game, player)
+
+    moves_left = value - 1
+
+    post_message =
+      if moves_left > 0 do
+        {500, {:move_active_player, value - 1}}
+      else
+        # TODO the game should be in a busy state while the player is moving
+        # therefore we should send a message that puts the game back into
+        # a ready state once the player has finished moving
+        nil
+      end
+
+    {:ok, game, post_message}
   end
 
-  def apply_effects(game, effects) do
-    IO.inspect(["effects", effects])
-
-    {:ok, game}
+  def use_card(_game, player, card) when player.energy < card.cost do
+    {:error, :not_enough_energy}
   end
 
-  def use_card(game, player_id, card_id) do
+  def use_card(game, player, card) do
+    base_message = "#{player} used #{card.name} costing #{card.cost} energy"
+
+    player = Map.put(player, :energy, player.energy - card.cost)
+
+    {game, post_message} =
+      case card.action do
+        :move ->
+          %{low_value: low_value, high_value: high_value} = card
+          value = Enum.random(low_value..high_value)
+
+          post_message =
+            if value > 0 do
+              {500, {:move_active_player, value}}
+            else
+              nil
+            end
+
+          game = game |> new_message("#{base_message}, will move by #{value} spaces")
+
+          {game, post_message}
+
+        _ ->
+          raise "unhandled action"
+      end
+
+    hand = Enum.filter(player.hand, fn c -> c.id != card.id end)
+    player = Map.put(player, :hand, hand)
+
+    discard_pile = player.discard_pile ++ [card]
+    player = Map.put(player, :discard_pile, discard_pile)
+
+    game = update_player(game, player)
+
+    {:ok, game, post_message}
+  end
+
+  def update_player(game, player) do
+    Map.put(
+      game,
+      :players,
+      Enum.map(game.players, fn p ->
+        if p.id == player.id do
+          player
+        else
+          p
+        end
+      end)
+    )
+  end
+
+  def attempt_to_use_card(game, player_id, card_id) do
     with :ok <- game_in_state(game, :active),
          {:ok, player} <- get_player_by_id(game, player_id),
          :ok <- is_players_turn(game, player),
          {:ok, card} <- card_id_to_card_in_hand(player, card_id),
-         {:ok, effects} <- use_card(card),
-         {:ok, game} <- apply_effects(game, effects) do
-      {:ok, game}
+         {:ok, game, post_message} <- use_card(game, player, card) do
+      {:ok, game, post_message}
     end
   end
 
@@ -89,7 +163,7 @@ defmodule Jahns.Game do
     :ok
   end
 
-  def game_in_state(game, state) do
+  def game_in_state(_game, _state) do
     {:error, :game_not_in_required_state}
   end
 
@@ -98,7 +172,7 @@ defmodule Jahns.Game do
   end
 
   def player_can_start_game?(game, player) do
-    is_player_host?(player) && length(game.players) >= 2
+    game_in_state(game, :setup) == :ok && is_player_host?(player) && length(game.players) >= 2
   end
 
   def add_player(game, player_id, player_name) do

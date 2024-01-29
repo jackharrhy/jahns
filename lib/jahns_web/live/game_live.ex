@@ -29,15 +29,19 @@ defmodule JahnsWeb.GameLive do
     {:noreply, put_temporary_flash(socket, level, message)}
   end
 
-  def index_to_transform(index) do
-    offset = 16
+  def player_to_style(player) do
+    {_id, x, y} = player.node
+    offset_amount = 16
 
-    case index do
-      0 -> "translate(0 -#{offset})"
-      1 -> "translate(#{offset} 0)"
-      2 -> "translate(0 #{offset})"
-      3 -> "translate(-#{offset} 0)"
-    end
+    {x, y} =
+      case player.index do
+        0 -> {x, y - offset_amount}
+        1 -> {x + offset_amount, y}
+        2 -> {x, y + offset_amount}
+        3 -> {x - offset_amount, y}
+      end
+
+    "transform 0.25s ease-in-out; transform: translate(#{x}px, #{y}px);"
   end
 
   def render_map(assigns) do
@@ -58,15 +62,8 @@ defmodule JahnsWeb.GameLive do
         />
       <% end %>
 
-      <%= for %{id: id, index: index, art: {:text, text}, node: {_id, x, y}} <- @game.players do %>
-        <text
-          id={id}
-          x={x}
-          y={y}
-          dominant-baseline="middle"
-          text-anchor="middle"
-          transform={index_to_transform(index)}
-        >
+      <%= for %{id: id, art: {:text, text}} = player <- @game.players do %>
+        <text id={id} dominant-baseline="middle" text-anchor="middle" style={player_to_style(player)}>
           <%= text %>
         </text>
       <% end %>
@@ -83,6 +80,7 @@ defmodule JahnsWeb.GameLive do
       <div class="messages border p-2 overflow-y-auto">
         <%= for message <- @game.messages do %>
           <p><%= message %></p>
+          <hr class="my-1" />
         <% end %>
       </div>
       <div class="actions border flex items-center justify-center">
@@ -143,7 +141,7 @@ defmodule JahnsWeb.GameLive do
 
     card_id = String.to_integer(card_id)
 
-    case GameServer.use_card(game.slug, player.id, card_id) do
+    case GameServer.attempt_to_use_card(game.slug, player.id, card_id) do
       {:ok, game} ->
         {:noreply, assign(socket, game: game)}
 
