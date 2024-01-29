@@ -41,7 +41,7 @@ defmodule JahnsWeb.GameLive do
         3 -> {x - offset_amount, y}
       end
 
-    "transform 0.25s ease-in-out; transform: translate(#{x}px, #{y}px);"
+    "transition: 0.25s ease-in-out; transform: translate(#{x}px, #{y}px);"
   end
 
   def render_map(assigns) do
@@ -112,7 +112,7 @@ defmodule JahnsWeb.GameLive do
               <button
                 phx-click="use-card"
                 phx-value-card-id={card.id}
-                class="flex flex-col gap-1 justify-center p-.25 h-full w-24 border-2 border text-center"
+                class="flex flex-col gap-1 justify-center items-center p-.25 h-full w-24 border-2 border text-center"
               >
                 <p class="text-xs"><%= card.name %></p>
                 <p class="text-2xl"><%= card.art |> elem(1) %></p>
