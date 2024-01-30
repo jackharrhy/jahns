@@ -11,11 +11,12 @@ defmodule JahnsWeb.GameLive do
     session_id = socket.assigns.session_id
 
     socket =
-      if is_nil(session_id) do
-        socket
-      else
-        {:ok, player} = Game.get_player_by_id(game, session_id)
-        assign(socket, player: player)
+      case Game.get_player_by_id(game, session_id) do
+        {:ok, player} ->
+          assign(socket, player: player)
+
+        {:error, _reason} ->
+          assign(socket, player: nil)
       end
 
     {:noreply, socket}
@@ -132,6 +133,7 @@ defmodule JahnsWeb.GameLive do
   end
 
   attr :card, :map, required: true
+  attr :index, :integer, required: true
   attr :class, :string, required: true
   attr :rotation, :integer, required: true
 
@@ -141,7 +143,11 @@ defmodule JahnsWeb.GameLive do
       phx-click="use-card"
       phx-value-card-id={@card.id}
       class={"#{@class} card bg-white flex flex-col gap-1 justify-center items-center p-.25 border-2 border text-center"}
-      style={style_transform("rotate3d(0, 1, 0, #{@rotation}deg)")}
+      style={
+        style_transform(
+          "rotate3d(0, 1, 0, #{@rotation}deg) translateX(calc(#{@index} * var(--card-width)))"
+        )
+      }
     >
       <p class="text-xs"><%= @card.name %></p>
       <p class="text-2xl"><%= @card.art |> elem(1) %></p>
@@ -150,7 +156,11 @@ defmodule JahnsWeb.GameLive do
     </button>
     <div
       class={"#{@class} card bg-white flex flex-col gap-1 justify-center items-center p-.25 border-2 border text-center"}
-      style={style_transform("rotate3d(0, 1, 0, #{@rotation + 180}deg)")}
+      style={
+        style_transform(
+          "rotate3d(0, 1, 0, #{@rotation + 180}deg) translateX(calc(#{@index} * var(--card-width)))"
+        )
+      }
     >
       <p>jahns</p>
     </div>
@@ -161,14 +171,14 @@ defmodule JahnsWeb.GameLive do
     ~H"""
     <div class="cards flex border">
       <%= unless is_nil(@player) do %>
-        <%= for card <- @player.draw_pile do %>
-          <.render_card card={card} class="draw-pile" rotation={180} />
+        <%= for {card, index} <- Enum.with_index(@player.draw_pile) do %>
+          <.render_card card={card} index={index} class="draw-pile" rotation={180} />
         <% end %>
-        <%= for card <- @player.hand do %>
-          <.render_card card={card} class="hand" rotation={0} />
+        <%= for {card, index} <- Enum.with_index(@player.hand) do %>
+          <.render_card card={card} index={index} class="hand" rotation={0} />
         <% end %>
-        <%= for card <- @player.discard_pile do %>
-          <.render_card card={card} class="discard-pile" rotation={180} />
+        <%= for {card, index} <- Enum.with_index(@player.discard_pile) do %>
+          <.render_card card={card} index={index} class="discard-pile" rotation={180} />
         <% end %>
       <% end %>
     </div>

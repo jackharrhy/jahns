@@ -39,6 +39,11 @@ defmodule Jahns.Game do
   def end_turn(game, player) do
     player = player |> Map.put(:energy, Player.default_max_energy())
 
+    player =
+      player
+      |> Map.put(:discard_pile, player.hand ++ player.discard_pile)
+      |> Map.put(:hand, [])
+
     game =
       game
       |> update_player(player)
