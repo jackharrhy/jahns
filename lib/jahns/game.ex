@@ -20,6 +20,55 @@ defmodule Jahns.Game do
     )
   end
 
+  def setup_turn(game, player) do
+    {pulled_cards, rest} = Enum.split(player.draw_pile, player.draw_amount)
+
+    player =
+      player
+      |> Map.put(:draw_pile, rest)
+      |> Map.put(:hand, pulled_cards)
+
+    game =
+      game
+      |> Map.put(:turn, player.id)
+      |> update_player(player)
+
+    game
+  end
+
+  def end_turn(game, player) do
+    player = player |> Map.put(:energy, Player.default_max_energy())
+
+    game =
+      game
+      |> update_player(player)
+
+    next_player = Enum.at(game.players, player.index + 1)
+
+    next_player =
+      if is_nil(next_player) do
+        Enum.at(game.players, 0)
+      else
+        next_player
+      end
+
+    game |> setup_turn(next_player)
+  end
+
+  def attempt_to_end_turn(game, player_id) do
+    {:ok, player} = get_player_by_id(game, player_id)
+
+    if can_end_turn?(game, player) do
+      {:ok, end_turn(game, player)}
+    else
+      {:error, :cannot_end_turn}
+    end
+  end
+
+  def can_end_turn?(game, player) do
+    game.turn == player.id and game.state == :active
+  end
+
   def start_game(game, player_id) do
     {:ok, player} = get_player_by_id(game, player_id)
 
@@ -29,10 +78,7 @@ defmodule Jahns.Game do
       game =
         game
         |> Map.put(:state, :active)
-        |> Map.put(:turn, random_player.id)
-
-      game =
-        game
+        |> setup_turn(random_player)
         |> new_message("game started by #{player}")
         |> new_message("it is #{random_player}'s turn")
 
@@ -43,8 +89,6 @@ defmodule Jahns.Game do
   end
 
   def move_active_player(game, value) do
-    IO.inspect("move_active_player #{value}")
-
     {:ok, player} = get_player_by_id(game, game.turn)
     player_node_id = player.node |> elem(0)
 
@@ -65,10 +109,7 @@ defmodule Jahns.Game do
       if moves_left > 0 do
         {500, {:move_active_player, value - 1}}
       else
-        # TODO the game should be in a busy state while the player is moving
-        # therefore we should send a message that puts the game back into
-        # a ready state once the player has finished moving
-        nil
+        {500, {:put_game_into_state, :active}}
       end
 
     {:ok, game, post_message}
@@ -89,16 +130,20 @@ defmodule Jahns.Game do
           %{low_value: low_value, high_value: high_value} = card
           value = Enum.random(low_value..high_value)
 
-          post_message =
-            if value > 0 do
-              {500, {:move_active_player, value}}
-            else
-              nil
-            end
+          if value > 0 do
+            game =
+              game
+              |> Map.put(:state, :busy)
+              |> new_message("#{base_message}, will move by #{value} spaces")
 
-          game = game |> new_message("#{base_message}, will move by #{value} spaces")
+            post_message = {500, {:move_active_player, value}}
 
-          {game, post_message}
+            {game, post_message}
+          else
+            game = game |> new_message("#{base_message}, but didn't move!")
+
+            {game, nil}
+          end
 
         _ ->
           raise "unhandled action"
@@ -165,6 +210,10 @@ defmodule Jahns.Game do
 
   def game_in_state(_game, _state) do
     {:error, :game_not_in_required_state}
+  end
+
+  def put_game_into_state(game, state) do
+    Map.put(game, :state, state)
   end
 
   def is_player_host?(player) when not is_nil(player) do

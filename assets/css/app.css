@@ -26,8 +26,8 @@ main {
 
 .game-container {
   display: grid;
-  grid-template-columns: 20em 1fr;
-  grid-template-rows: 1fr 10em 10em;
+  grid-template-columns: 20rem 1fr;
+  grid-template-rows: 1fr 10rem 10rem;
   grid-auto-columns: 1fr;
   gap: 0.5rem;
   grid-auto-flow: row;
@@ -55,4 +55,28 @@ main {
 
 .cards {
   grid-area: cards;
+
+  position: relative;
+}
+
+.card {
+  --card-height: 95%;
+  --card-width: 6.5rem;
+  position: absolute;
+  height: var(--card-height);
+  width: var(--card-width);
+  top: calc((100% - var(--card-height)) / 2);
+  backface-visibility: hidden;
+}
+
+.draw-pile {
+  left: 0.25rem;
+}
+
+.hand {
+  left: calc(50% - var(--card-width) / 2);
+}
+
+.discard-pile {
+  left: calc(100% - var(--card-width) - 0.25rem);
 }

@@ -11,9 +11,11 @@ defmodule Jahns.Player do
     :energy,
     :currency,
     :points,
+    :draw_amount,
     :draw_pile,
     :hand,
-    :discard_pile
+    :discard_pile,
+    :exhaust_pile
   ]
 
   @art [
@@ -43,6 +45,12 @@ defmodule Jahns.Player do
     @default_max_energy
   end
 
+  @default_draw_amount 4
+
+  def default_draw_amount() do
+    @default_draw_amount
+  end
+
   def new(id, name, index, node) do
     random_art = Enum.random(@art)
 
@@ -55,9 +63,11 @@ defmodule Jahns.Player do
       energy: @default_max_energy,
       currency: 0,
       points: 0,
-      draw_pile: [],
-      hand: Card.cards(),
-      discard_pile: []
+      draw_amount: @default_draw_amount,
+      draw_pile: Enum.shuffle(Card.cards()),
+      hand: [],
+      discard_pile: [],
+      exhaust_pile: []
     })
   end
 end
