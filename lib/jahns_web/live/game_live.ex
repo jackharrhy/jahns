@@ -80,8 +80,8 @@ defmodule JahnsWeb.GameLive do
     """
   end
 
-  def style_transform(transform) do
-    "transition: 0.25s ease-in-out; transform: #{transform};"
+  def style_transform(transform, time \\ "0.25s", easing \\ "ease-in-out") do
+    "transition: #{time} #{easing}; transform: #{transform};"
   end
 
   def player_to_style(player) do
@@ -135,7 +135,7 @@ defmodule JahnsWeb.GameLive do
   attr :card, :map, required: true
   attr :index, :integer, required: true
   attr :class, :string, required: true
-  attr :rotation, :integer, required: true
+  attr :style, :string, required: true
 
   def render_card(assigns) do
     ~H"""
@@ -143,28 +143,38 @@ defmodule JahnsWeb.GameLive do
       phx-click="use-card"
       phx-value-card-id={@card.id}
       class={"#{@class} card bg-white flex flex-col gap-1 justify-center items-center p-.25 border-2 border text-center"}
-      style={
-        style_transform(
-          "rotate3d(0, 1, 0, #{@rotation}deg) translateX(calc(#{@index} * var(--card-width)))"
-        )
-      }
+      style={@style}
     >
       <p class="text-xs"><%= @card.name %></p>
       <p class="text-2xl"><%= @card.art |> elem(1) %></p>
       <p><%= @card.low_value %> - <%= @card.high_value %></p>
       <p><%= @card.cost %> ✨</p>
     </button>
+    <!--
+    TODO
     <div
       class={"#{@class} card bg-white flex flex-col gap-1 justify-center items-center p-.25 border-2 border text-center"}
-      style={
-        style_transform(
-          "rotate3d(0, 1, 0, #{@rotation + 180}deg) translateX(calc(#{@index} * var(--card-width)))"
-        )
-      }
     >
       <p>jahns</p>
     </div>
+    !--->
     """
+  end
+
+  def card_style(index, position) do
+    transform =
+      case position do
+        :draw_pile ->
+          "rotate3d(0, 1, 0, 180deg) translateX(calc((#{index} * var(--card-width) / 16) * -1))"
+
+        :hand ->
+          "rotate3d(0, 1, 0, 0deg) translateX(calc(#{index} * var(--card-width)))"
+
+        :discard_pile ->
+          "rotate3d(0, 1, 0, -180deg) translateX(calc(#{index} * var(--card-width) / 16))"
+      end
+
+    style_transform(transform, "1s", "ease-out")
   end
 
   def render_cards(assigns) do
@@ -172,13 +182,23 @@ defmodule JahnsWeb.GameLive do
     <div class="cards flex border">
       <%= unless is_nil(@player) do %>
         <%= for {card, index} <- Enum.with_index(@player.draw_pile) do %>
-          <.render_card card={card} index={index} class="draw-pile" rotation={180} />
+          <.render_card
+            card={card}
+            index={index}
+            class="draw-pile"
+            style={card_style(index, :draw_pile)}
+          />
         <% end %>
         <%= for {card, index} <- Enum.with_index(@player.hand) do %>
-          <.render_card card={card} index={index} class="hand" rotation={0} />
+          <.render_card card={card} index={index} class="hand" style={card_style(index, :hand)} />
         <% end %>
         <%= for {card, index} <- Enum.with_index(@player.discard_pile) do %>
-          <.render_card card={card} index={index} class="discard-pile" rotation={180} />
+          <.render_card
+            card={card}
+            index={index}
+            class="discard-pile"
+            style={card_style(index, :discard_pile)}
+          />
         <% end %>
       <% end %>
     </div>
