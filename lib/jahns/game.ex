@@ -33,7 +33,49 @@ defmodule Jahns.Game do
       |> Map.put(:turn, player.id)
       |> update_player(player)
 
-    game
+    {game, post_message} =
+      if length(pulled_cards) < player.draw_amount do
+        game = game |> Map.put(:state, :busy)
+
+        remaining = player.draw_amount - length(pulled_cards)
+        {game, {1000, {:restock_and_continue_active_player_pull, remaining}}}
+      else
+        {game, nil}
+      end
+
+    {game, post_message}
+  end
+
+  def restock_and_continue_active_player_pull(game, remaining) do
+    {:ok, player} = get_player_by_id(game, game.turn)
+
+    player =
+      player
+      |> Map.put(:draw_pile, player.discard_pile)
+      |> Map.put(:discard_pile, [])
+
+    game = update_player(game, player)
+
+    post_message = {1000, {:pull_from_active_player_draw_pile, remaining}}
+
+    {:ok, game, post_message}
+  end
+
+  def pull_from_active_player_draw_pile(game, remaining) do
+    {:ok, player} = get_player_by_id(game, game.turn)
+
+    {pulled_cards, rest} = Enum.split(player.draw_pile, remaining)
+
+    player =
+      player
+      |> Map.put(:draw_pile, rest)
+      |> Map.put(:hand, pulled_cards)
+
+    game = update_player(game, player)
+
+    post_message = {1000, {:put_game_into_state, :active}}
+
+    {:ok, game, post_message}
   end
 
   def end_turn(game, player) do
@@ -64,7 +106,9 @@ defmodule Jahns.Game do
     {:ok, player} = get_player_by_id(game, player_id)
 
     if can_end_turn?(game, player) do
-      {:ok, end_turn(game, player)}
+      {game, post_message} = end_turn(game, player)
+
+      {:ok, game, post_message}
     else
       {:error, :cannot_end_turn}
     end
@@ -80,10 +124,13 @@ defmodule Jahns.Game do
     if game.state == :setup and player_can_start_game?(game, player) do
       random_player = Enum.random(game.players)
 
-      game =
+      {game, nil} =
         game
         |> Map.put(:state, :active)
         |> setup_turn(random_player)
+
+      game =
+        game
         |> new_message("game started by #{player}")
         |> new_message("it is #{random_player}'s turn")
 

@@ -100,7 +100,11 @@ defmodule Jahns.GameServer do
   @impl GenServer
   def handle_call({:attempt_to_end_turn, player_id}, _from, state) do
     case Game.attempt_to_end_turn(state.game, player_id) do
-      {:ok, game} ->
+      {:ok, game, nil} ->
+        {:reply, {:ok, game}, %{state | game: game}}
+
+      {:ok, game, {send_after, message}} ->
+        :timer.send_after(send_after, self(), message)
         {:reply, {:ok, game}, %{state | game: game}}
 
       {:error, _} = error ->
@@ -154,6 +158,30 @@ defmodule Jahns.GameServer do
   def handle_info({:put_game_into_state, game_state}, state) do
     Logger.info("Putting game state from #{inspect(state.game.state)} to #{inspect(game_state)}")
     game = Game.put_game_into_state(state.game, game_state)
+    broadcast_game_updated!(game.slug, game)
+    {:noreply, %{state | game: game}}
+  end
+
+  @impl GenServer
+  def handle_info({:restock_and_continue_active_player_pull, remaining}, state) do
+    Logger.info("Restocking and continuing active player pull, #{remaining} remaining")
+
+    {:ok, game, {send_after, message}} =
+      Game.restock_and_continue_active_player_pull(state.game, remaining)
+
+    :timer.send_after(send_after, self(), message)
+    broadcast_game_updated!(game.slug, game)
+    {:noreply, %{state | game: game}}
+  end
+
+  @impl GenServer
+  def handle_info({:pull_from_active_player_draw_pile, remaining}, state) do
+    Logger.info("Pulling from active player draw pile, #{remaining} remaining")
+
+    {:ok, game, {send_after, message}} =
+      Game.pull_from_active_player_draw_pile(state.game, remaining)
+
+    :timer.send_after(send_after, self(), message)
     broadcast_game_updated!(game.slug, game)
     {:noreply, %{state | game: game}}
   end
