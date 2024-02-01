@@ -62,6 +62,7 @@ main {
 .card {
   --card-height: 95%;
   --card-width: 6.5rem;
+  --card-extra-width: calc(var(--card-width) + 0.25rem);
   position: absolute;
   height: var(--card-height);
   width: var(--card-width);

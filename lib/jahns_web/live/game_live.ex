@@ -132,25 +132,21 @@ defmodule JahnsWeb.GameLive do
     """
   end
 
-  def card_style(index, position, is_front_face) do
-    hide_rotation = if is_front_face, do: 180, else: 0
-    show_rotation = if is_front_face, do: 0, else: 180
-
-    hand_x_mult = if is_front_face, do: 1, else: -1
-
-    draw_pile_rotate_mult = if is_front_face, do: -1, else: 1
-    discard_pile_rotate_mult = if is_front_face, do: 1, else: -1
-
+  def card_style(index, pile_size, position) do
     transform =
       case position do
         "draw-pile" ->
-          "rotate3d(0, 1, 0, #{hide_rotation}deg) translateX(calc((#{index} * var(--card-width) / 16) * #{draw_pile_rotate_mult}))"
+          "translateX(calc(#{index} * var(--card-extra-width) / 16))"
 
         "hand" ->
-          "rotate3d(0, 1, 0, #{show_rotation}deg) translateX(calc((#{index} * var(--card-width)) * #{hand_x_mult}))"
+          initial_position = "#{index} * var(--card-extra-width)"
+          pile_offset = "#{pile_size} * var(--card-extra-width) / 2"
+          half_card_offset = "var(--card-extra-width) / 2"
+
+          "translateX(calc((#{initial_position}) - (#{pile_offset}) + (#{half_card_offset})))"
 
         "discard-pile" ->
-          "rotate3d(0, 1, 0, #{hide_rotation}deg) translateX(calc((#{index} * var(--card-width) / 16) * #{discard_pile_rotate_mult}))"
+          "translateX(calc(#{index} * var(--card-extra-width) / 16 * -1))"
       end
 
     style_transform(transform, "1s", "ease-out")
@@ -167,20 +163,13 @@ defmodule JahnsWeb.GameLive do
       phx-click="use-card"
       phx-value-card-id={@card.id}
       class={"#{@class} card bg-white flex flex-col gap-1 justify-center items-center p-.25 border-2 border text-center"}
-      style={"z-index: #{@index}; #{card_style(@index, @class, true)}"}
+      style={"z-index: #{@index}; #{card_style(@index, @pile_size, @class)}"}
     >
       <p class="text-xs"><%= @card.name %></p>
       <p class="text-2xl"><%= @card.art |> elem(1) %></p>
       <p><%= @card.low_value %> - <%= @card.high_value %></p>
       <p><%= @card.cost %> ✨</p>
     </button>
-    <div
-      data-index={@index}
-      class={"#{@class} card bg-white flex flex-col gap-1 justify-center items-center p-.25 border-2 border text-center"}
-      style={"z-index: #{@index}; #{card_style(@index, @class, false)}"}
-    >
-      <p>jahns</p>
-    </div>
     """
   end
 
