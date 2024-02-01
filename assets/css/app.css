@@ -66,6 +66,7 @@ main {
   height: var(--card-height);
   width: var(--card-width);
   top: calc((100% - var(--card-height)) / 2);
+  backface-visibility: hidden;
 }
 
 .draw-pile {

@@ -132,10 +132,33 @@ defmodule JahnsWeb.GameLive do
     """
   end
 
+  def card_style(index, position, is_front_face) do
+    hide_rotation = if is_front_face, do: 180, else: 0
+    show_rotation = if is_front_face, do: 0, else: 180
+
+    hand_x_mult = if is_front_face, do: 1, else: -1
+
+    draw_pile_rotate_mult = if is_front_face, do: -1, else: 1
+    discard_pile_rotate_mult = if is_front_face, do: 1, else: -1
+
+    transform =
+      case position do
+        "draw-pile" ->
+          "rotate3d(0, 1, 0, #{hide_rotation}deg) translateX(calc((#{index} * var(--card-width) / 16) * #{draw_pile_rotate_mult}))"
+
+        "hand" ->
+          "rotate3d(0, 1, 0, #{show_rotation}deg) translateX(calc((#{index} * var(--card-width)) * #{hand_x_mult}))"
+
+        "discard-pile" ->
+          "rotate3d(0, 1, 0, #{hide_rotation}deg) translateX(calc((#{index} * var(--card-width) / 16) * #{discard_pile_rotate_mult}))"
+      end
+
+    style_transform(transform, "1s", "ease-out")
+  end
+
   attr :card, :map, required: true
   attr :index, :integer, required: true
   attr :class, :string, required: true
-  attr :style, :string, required: true
 
   def render_card(assigns) do
     ~H"""
@@ -143,62 +166,42 @@ defmodule JahnsWeb.GameLive do
       phx-click="use-card"
       phx-value-card-id={@card.id}
       class={"#{@class} card bg-white flex flex-col gap-1 justify-center items-center p-.25 border-2 border text-center"}
-      style={@style}
+      style={card_style(@index, @class, true)}
     >
       <p class="text-xs"><%= @card.name %></p>
       <p class="text-2xl"><%= @card.art |> elem(1) %></p>
       <p><%= @card.low_value %> - <%= @card.high_value %></p>
       <p><%= @card.cost %> ✨</p>
     </button>
-    <!--
-    TODO
     <div
       class={"#{@class} card bg-white flex flex-col gap-1 justify-center items-center p-.25 border-2 border text-center"}
+      style={card_style(@index, @class, false)}
     >
       <p>jahns</p>
     </div>
-    !--->
     """
   end
 
-  def card_style(index, position) do
-    transform =
-      case position do
-        :draw_pile ->
-          "rotate3d(0, 1, 0, 180deg) translateX(calc((#{index} * var(--card-width) / 16) * -1))"
-
-        :hand ->
-          "rotate3d(0, 1, 0, 0deg) translateX(calc(#{index} * var(--card-width)))"
-
-        :discard_pile ->
-          "rotate3d(0, 1, 0, -180deg) translateX(calc(#{index} * var(--card-width) / 16))"
+  def combine_cards(piles) do
+    piles =
+      for {pile, class} <- piles do
+        pile |> Enum.with_index() |> Enum.map(fn {card, index} -> {card, index, class} end)
       end
+      |> List.flatten()
 
-    style_transform(transform, "1s", "ease-out")
+    Enum.sort(piles, fn {card1, _, _}, {card2, _, _} -> card1.id < card2.id end)
   end
 
   def render_cards(assigns) do
     ~H"""
     <div class="cards flex border">
       <%= unless is_nil(@player) do %>
-        <%= for {card, index} <- Enum.with_index(@player.draw_pile) do %>
-          <.render_card
-            card={card}
-            index={index}
-            class="draw-pile"
-            style={card_style(index, :draw_pile)}
-          />
-        <% end %>
-        <%= for {card, index} <- Enum.with_index(@player.hand) do %>
-          <.render_card card={card} index={index} class="hand" style={card_style(index, :hand)} />
-        <% end %>
-        <%= for {card, index} <- Enum.with_index(@player.discard_pile) do %>
-          <.render_card
-            card={card}
-            index={index}
-            class="discard-pile"
-            style={card_style(index, :discard_pile)}
-          />
+        <%= for {card, index, class} <- combine_cards([
+          {@player.draw_pile, "draw-pile"},
+          {@player.hand, "hand"},
+          {@player.discard_pile, "discard-pile"}])
+        do %>
+          <.render_card card={card} index={index} class={class} />
         <% end %>
       <% end %>
     </div>
