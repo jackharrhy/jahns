@@ -102,7 +102,7 @@ defmodule JahnsWeb.GameLive do
   def render_map(assigns) do
     ~H"""
     <div class="map border flex items-center justify-center">
-      <svg viewBox="0 0 256 256" class="h-full">
+      <svg id="map" viewBox="0 0 1083.7333 541.86666" class="h-full">
         <%= for {node, x, y} <- @game.map.nodes do %>
           <circle id={node} cx={x} cy={y} r="5" fill="black" />
         <% end %>

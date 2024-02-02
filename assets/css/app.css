@@ -41,6 +41,19 @@ main {
   grid-area: map;
 }
 
+#map {
+  background-image: url("/images/map.png");
+  background-size: cover;
+}
+
+svg line {
+  opacity: 0;
+}
+
+svg circle {
+  opacity: 0;
+}
+
 .messages {
   grid-area: messages;
 }
